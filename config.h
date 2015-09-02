@@ -22,12 +22,17 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#ifndef INITSOFAPYTHON_H
-#define INITSOFAPYTHON_H
-
-#include <SofaPython/SofaPython.h>
+#ifndef SOFAPYTHON_CONFIG_H
+#define SOFAPYTHON_CONFIG_H
 
 #define SOFAPYTHON_VERSION_STR "0.0"
 
+#include <sofa/helper/system/config.h>
 
-#endif // INITEmptyPlugin_H
+#ifdef SOFA_BUILD_SOFAPYTHON
+#  define SOFA_SOFAPYTHON_API SOFA_EXPORT_DYNAMIC_LIBRARY
+#else
+#  define SOFA_SOFAPYTHON_API SOFA_IMPORT_DYNAMIC_LIBRARY
+#endif
+
+#endif
