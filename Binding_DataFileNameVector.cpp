@@ -19,44 +19,54 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#ifndef PYTHONVISITOR_H
-#define PYTHONVISITOR_H
 
-#include "PythonCommon.h"
+/// @author M Nesme @date 2016
 
-#include <sofa/simulation/Visitor.h>
+#include "Binding_DataFileNameVector.h"
+#include "Binding_Data.h"
 
-namespace sofa
+using namespace sofa::helper;
+using namespace sofa::core::objectmodel;
+
+
+
+
+extern "C" PyObject * DataFileNameVector_clear(PyObject *self, PyObject *)
 {
+    DataFileNameVector* data = down_cast<DataFileNameVector>( ((PyPtr<BaseData>*)self)->object );
 
-namespace simulation
+    sofa::helper::vector<std::string>& val = *data->beginEdit();
+    val.clear();
+    data->endEdit();
+
+    Py_RETURN_NONE;
+}
+
+extern "C" PyObject * DataFileNameVector_addPath(PyObject *self, PyObject *args)
 {
+    char *path;
+    if (!PyArg_ParseTuple(args, "s",&path))
+        Py_RETURN_NONE;
+
+    DataFileNameVector* data = down_cast<DataFileNameVector>( ((PyPtr<BaseData>*)self)->object );
+
+    data->addPath(path);
+
+    Py_RETURN_NONE;
+}
+
+
+SP_CLASS_ATTRS_BEGIN(DataFileNameVector)
+SP_CLASS_ATTRS_END
 
 
 
-class PythonVisitor : public Visitor
-{
-public:
-    PythonVisitor(const core::ExecParams* params, PyObject *pyVisitor);
-
-    virtual Result processNodeTopDown(simulation::Node* node);
-    virtual void processNodeBottomUp(simulation::Node* node);
-
-    /// It seems no possible to pass a reference variable to a python function, so repeat cannot be modified in python
-    /// The python function must returns a code:
-    /// -1 -> dag / NO_REPETITION
-    ///  0 -> tree / NO_REPETITION
-    ///  1 -> tree / REPEAT_ONCE
-    ///  2 -> tree / REPEAT_ALL
-    virtual bool treeTraversal(TreeTraversalRepetition& repeat);
-
-protected:
-    PyObject *m_PyVisitor;
-};
+SP_CLASS_METHODS_BEGIN(DataFileNameVector)
+SP_CLASS_METHOD(DataFileNameVector,addPath)
+SP_CLASS_METHOD(DataFileNameVector,clear)
+SP_CLASS_METHODS_END
 
 
-} // namespace simulation
 
-} // namespace sofa
+SP_CLASS_TYPE_PTR_ATTR(DataFileNameVector,DataFileNameVector,Data)
 
-#endif // PYTHONVISITOR_H
