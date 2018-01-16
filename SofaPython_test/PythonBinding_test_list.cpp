@@ -19,22 +19,61 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#ifndef SOFAPYTHON_CONFIG_H
-#define SOFAPYTHON_CONFIG_H
+/******************************************************************************
+ * Contributors:
+ *      - damien.marchal@univ-lille1.fr
+ ******************************************************************************/
+#include <SofaSimulationGraph/testing/BaseSimulationTest.h>
+using sofa::helper::testing::BaseSimulationTest ;
 
-#include <sofa/config/sharedlibrary_defines.h>
+class SetOfPythonScenes
+{
+public:
+    std::vector<std::string> m_scenes ;
 
-#define SOFAPYTHON_VERSION_STR "${SOFAPYTHON_VERSION}"
-#define SOFAPYTHON_MAJOR_VERSION ${SOFAPYTHON_MAJOR_VERSION}
-#define SOFAPYTHON_MINOR_VERSION ${SOFAPYTHON_MINOR_VERSION}
+    SetOfPythonScenes(const std::initializer_list<std::string>& s)
+    {
+        for(auto& i : s)
+        {
+            addATestScene(i) ;
+        }
+    }
 
-#define SOFA_HAVE_PYTHON
+    void addATestScene(const std::string s)
+    {
+        static const std::string rootPath = std::string(SOFAPYTHON_TEST_PYTHON_DIR);
+        m_scenes.push_back(rootPath+"/"+s);
+    }
+} ;
 
-#ifdef SOFA_BUILD_SOFAPYTHON
-#  define SOFA_TARGET SofaPython
-#  define SOFA_SOFAPYTHON_API SOFA_EXPORT_DYNAMIC_LIBRARY
-#else
-#  define SOFA_SOFAPYTHON_API SOFA_IMPORT_DYNAMIC_LIBRARY
-#endif
+class PythonBinding_tests :  public BaseSimulationTest
+                            ,public ::testing::WithParamInterface<std::string>
+{
+public:
 
-#endif
+    PythonBinding_tests()
+    {
+        importPlugin("SofaPython") ;
+    }
+
+    void runTest(const std::string& filename){
+        SceneInstance c=SceneInstance::LoadFromFile(filename) ;
+    }
+} ;
+
+SetOfPythonScenes scenes = {"test_BindingBase.py",
+                            "test_BindingData.py",
+                            "test_BindingLink.py",
+                            "test_BindingSofa.py"} ;
+
+TEST_P(PythonBinding_tests, scene)
+{
+   this->runTest(GetParam());
+}
+
+INSTANTIATE_TEST_CASE_P(PythonBinding,
+						PythonBinding_tests,
+                        ::testing::ValuesIn(scenes.m_scenes));
+
+
+
