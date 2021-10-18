@@ -25,7 +25,7 @@ def createScene(rootNode):
 
     hexatopo = quadtopo.createChild('Hexa')
     hexatopo.createObject('EulerImplicitSolver')
-    hexatopo.createObject('CGLinearSolver')
+    hexatopo.createObject('CGLinearSolver', iterations=25, tolerance=1e-5, threshold=1e-5)
     hexatopo.createObject('ExtrudeQuadsAndGenerateHexas', name='extruder',
                             surfaceVertices=quadtopo.MechanicalObject.findData('position').getLinkPath(),
                             surfaceQuads=quadtopo.QuadSetTopologyContainer.findData('quads').getLinkPath(),
