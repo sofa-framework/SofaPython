@@ -43,3 +43,6 @@ ignore "PSDEExamples/PSDEAvgEngine.pyscn"
 
 # scenes needing Flexible (not compiled anymore the CI)
 ignore "sceneDataIO_write.py"
+
+# need output from sceneDataIO_write.py
+ignore "sceneDataIO_read.py"
