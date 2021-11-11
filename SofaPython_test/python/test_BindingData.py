@@ -19,7 +19,9 @@ def createScene(rootNode):
     ASSERT_FALSE( field.isSet() )
 
     ### Check the hasParent/parentPath
-    ASSERT_EQ( field.hasParent(), field.getParentPath() == True )
+    # Disabled, an API change in SOFA(sofa-framework/sofa#2354) make this test to fail
+    # see https://github.com/sofa-framework/SofaPython/issues/1
+    # ASSERT_EQ( field.hasParent(), field.getParentPath() == True )
 
     ### SetValueString
     t = field.getCounter()
